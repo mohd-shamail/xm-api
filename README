@@ -1,0 +1,28 @@
+This is Online learning App Developed by = 'Mohd Shamail'
+
+{
+    "name":"Shamail",
+    "email":"shamail3078@gmail.com",
+    "mobile_number":"7454033746",
+    "password":"shamail@1999"
+}
+
+
+"name":"Test user"
+"email":"test_1@gmail.com"
+"mobile_number":"7454033746"
+
+
+
+{
+  "email":"test_2@gmail.com",
+  "mobile_number":"8865914676",
+  "course":"HighSchool",
+  "schoolName":"Benhur public school",
+  "fatherName":"shamail",
+  "address":"neoria husainpur"
+}
+
+
+
+token =  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMyYjE5NWZjNjQ3NWE5MmJhZmJlZDQiLCJpYXQiOjE3MTQ1OTgyOTMsImV4cCI6MTc3NzcxMzQ5M30.11FiMBXl-pjCoo9uivGdkUA0uKu3qEmFdK4UB3OgtEo
