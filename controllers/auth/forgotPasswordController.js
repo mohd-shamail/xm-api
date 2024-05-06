@@ -24,7 +24,6 @@ const forgotPasswordController = {
         return next(CustomErrorHandler.notFound("User not found"));
       }
       const username = user.name;
-      console.log(username);
       // Generate a random temporary password
       const temporaryPassword = generateRandomPassword();
       console.log("temporary pwd =", temporaryPassword);

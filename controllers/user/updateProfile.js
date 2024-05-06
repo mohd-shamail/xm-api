@@ -6,12 +6,8 @@ const updateProfileController = {
   async updateProfile(req, res, next) {
     //req validation
     const updateProfileSchema = Joi.object({
-      // email: Joi.string().email({
-      //   minDomainSegments: 2,
-      //   tlds: { allow: ["com", "net", "in"] },
-      // }),
       mobile_number: Joi.string().min(10).max(10), // New
-      course: Joi.string(), // New
+      course: Joi.array().items(Joi.string().min(3).max(100)).required(), // New
       schoolName: Joi.string()
       .regex(/^[a-zA-Z\s.]+$/)
         .min(3)

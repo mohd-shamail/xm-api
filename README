@@ -23,6 +23,17 @@ This is Online learning App Developed by = 'Mohd Shamail'
   "address":"neoria husainpur"
 }
 
+{
+ "courseFee":"700",
+ "paymentMode":"Cash",
+ "lateFee":"50",
+ "discount":"50",
+ "fromDate":"01-03-2024",
+ "toDate":"05-05-2024" ,
+ "dueMonth":["Mar","Apr"],
+ "totalPayment":"700"
+}
 
 
-token =  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjMyYjE5NWZjNjQ3NWE5MmJhZmJlZDQiLCJpYXQiOjE3MTQ1OTgyOTMsImV4cCI6MTc3NzcxMzQ5M30.11FiMBXl-pjCoo9uivGdkUA0uKu3qEmFdK4UB3OgtEo
+token = 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3NmQ1YmRlMDhjMjEwOGFiNWI0YzciLCJpYXQiOjE3MTQ5MDg1MDcsImV4cCI6MTc3ODAyMzcwN30.3sClIuz63badzd__GX0uuKwuKfjgBgAsgACFN2HeB3U
