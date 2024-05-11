@@ -32,9 +32,7 @@ const submitfeeController = {
       dueMonth, //Jan2024
       totalPayment,
     } = req.body;
-    console.log("fromDate" , fromDate);
     try {
-      // Find the user by email
       const user = await User.findOne({ _id: req.user._id });
       if (!user) {
         next(CustomErrorHandler.notFound());
@@ -42,8 +40,8 @@ const submitfeeController = {
       const uuid = uuidv4();
       const receiptId = uuid.replace(/-/g, "").slice(0, 10);
       const submitDate = moment().format("MM/DD/YYYY hh:mm A");
-      console.log("receiptId =", receiptId);
-      console.log("submitDate =", submitDate);
+      // console.log("receiptId =", receiptId);
+      // console.log("submitDate =", submitDate);
 
       try {
         // Check if there are any existing fee submissions for the same user and the same months
@@ -55,7 +53,7 @@ const submitfeeController = {
         if (existingSubmission) {
           return next(
             CustomErrorHandler.notFound(
-              "You have already submitted fees for the same month(s)."
+              "You have already submitted fees for the this month(s)."
             )
           );
         }
@@ -109,12 +107,10 @@ const submitfeeController = {
         subtotalAmt,
         totalPayment
       );
-      res
-        .status(201)
-        .json({
-          message: `Your Fee of ${due_months} submitted successfully`,
-          feeSlip: feeSlip,
-        });
+      res.status(201).json({
+        message: `Your Fee of ${due_months} submitted successfully`,
+        feeSlip: feeSlip,
+      });
     } catch (err) {
       return next(err);
     }
@@ -231,11 +227,11 @@ async function sendFeeSlipByEmail(
   <td valign="top" align="center" style="padding:0;Margin:0;width:560px"><table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"><tr><td class="es-infoblock" align="center" style="padding:0;Margin:0;line-height:14px;font-size:12px;color:#CCCCCC"><strong>This is auto generated Fee Slip. Don't Reply!&nbsp;</strong> </td></tr></table></td></tr></table></td></tr></table></td></tr></table></td></tr></table></div></body></html>
   `;
 
-  const emails = [email, 'shamail3078@gmail.com'];
+  const emails = [email, "shamail3078@gmail.com"];
   // Email content
   const mailOptions = {
     from: "mshamail1999@gmail.com",
-    to: emails.join(', '),
+    to: emails.join(", "),
     subject: "Fee Invoice",
     html: emailTemplate,
   };

@@ -14,6 +14,7 @@ router.post("/updateProfile", auth, controllers.updateProfileController.updatePr
 router.post("/uploadProfileImg",auth, controllers.uploadProfilePictureController.store);
 //router.post('/refresh', refreshController.refresh);
 router.post("/submitfee",auth, controllers.submitfeeController.submitfees);
+router.post("/downloadFeesInvoice",auth, controllers.feesInvoiceController.downloadInvoice);
 
 
 module.exports = router;

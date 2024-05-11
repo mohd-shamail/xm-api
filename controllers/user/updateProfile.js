@@ -9,11 +9,11 @@ const updateProfileController = {
       mobile_number: Joi.string().min(10).max(10), // New
       course: Joi.array().items(Joi.string().min(3).max(100)).required(), // New
       schoolName: Joi.string()
-      .regex(/^[a-zA-Z\s.]+$/)
+        .regex(/^[a-zA-Z\s.]+$/)
         .min(3)
         .max(50),
       fatherName: Joi.string()
-      .regex(/^[a-zA-Z\s.]+$/)
+        .regex(/^[a-zA-Z\s.]+$/)
         .min(3)
         .max(30),
       address: Joi.string().min(3).max(50),
@@ -29,6 +29,10 @@ const updateProfileController = {
       if (!user) {
         next(CustomErrorHandler.notFound());
       }
+      // Initialize user profile if it doesn't exist
+      if (!user.profile) {
+        user.profile = {};
+      };
       user.mobile_number = mobile_number;
       user.profile.course = course;
       user.profile.schoolName = schoolName;
