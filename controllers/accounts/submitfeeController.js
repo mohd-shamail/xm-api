@@ -9,6 +9,7 @@ const { v4: uuidv4 } = require("uuid");
 const submitfeeController = {
   async submitfees(req, res, next) {
     const feeSlipSchema = Joi.object({
+      _id: Joi.string().required(),
       courseFee: Joi.string().required(),
       paymentMode: Joi.string().min(3).max(50).required(),
       lateFee: Joi.string().required(),
@@ -23,6 +24,7 @@ const submitfeeController = {
       return next(error);
     }
     const {
+      _id,
       courseFee,
       paymentMode,
       lateFee,
@@ -33,9 +35,9 @@ const submitfeeController = {
       totalPayment,
     } = req.body;
     try {
-      const user = await User.findOne({ _id: req.user._id });
+      const user = await User.findOne({ _id });
       if (!user) {
-        next(CustomErrorHandler.notFound());
+       return next(CustomErrorHandler.notFound());
       }
       const uuid = uuidv4();
       const receiptId = uuid.replace(/-/g, "").slice(0, 10);
@@ -46,7 +48,7 @@ const submitfeeController = {
       try {
         // Check if there are any existing fee submissions for the same user and the same months
         const existingSubmission = await StudentFees.findOne({
-          user: req.user._id,
+          user: _id,
           dueMonth: { $all: dueMonth }, // Check if all months in the current submission exist in previous submissions
         });
 
@@ -66,7 +68,7 @@ const submitfeeController = {
 
       // Create a new fee slip
       const feeSlip = new StudentFees({
-        user: req.user._id,
+        user: _id,
         receiptId: receiptId,
         courseFee: courseFee,
         paymentMode: paymentMode,
@@ -110,6 +112,7 @@ const submitfeeController = {
       res.status(201).json({
         message: `Your Fee of ${due_months} submitted successfully`,
         feeSlip: feeSlip,
+        success: true,
       });
     } catch (err) {
       return next(err);

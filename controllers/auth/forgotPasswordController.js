@@ -17,6 +17,7 @@ const forgotPasswordController = {
       return next(error);
     }
     const { email } = req.body;
+    console.log(req.body);
     try {
       // Check if the user with the provided email exists
       const user = await User.findOne({ email });

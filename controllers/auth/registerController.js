@@ -16,7 +16,7 @@ const registerController = {
       mobile_number: Joi.string().required().min(10).max(10),
       password: Joi.string()
         .required()
-        .pattern(new RegExp("^[a-zA-Z0-9!@#$%^&*()-_+=<>?/{}|~]{3,30}$")),
+        .pattern(new RegExp("^[a-zA-Z0-9!@#$%^&*()-_+=<>?/{}|~]{3,30}$")).min(3).max(30),
     });
     console.log("sign up data = ", req.body);
     const { error } = registerSchema.validate(req.body);

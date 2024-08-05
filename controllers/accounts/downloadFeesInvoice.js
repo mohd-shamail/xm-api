@@ -1,39 +1,61 @@
 const User = require("../../models/user");
+const Joi = require("joi");
 const StudentFees = require("../../models/studentFees");
 const CustomErrorHandler = require("../../services/CustomErrorHandler");
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 
-// Define the function first
-async function generatePDFFromHTML(htmlContent, outputPath) {
+// // Define the function first
+// async function generatePDFFromHTML(htmlContent, outputPath) {
+//   const browser = await puppeteer.launch({ headless: true });
+//   const page = await browser.newPage();
+
+//   // Set content of the page with the provided HTML
+//   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+//   // Generate PDF
+//   await page.pdf({ path: outputPath, format: "A4" });
+
+//   await browser.close();
+// }
+
+const generatePDF = async (htmlContent) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-
-  // Set content of the page with the provided HTML
   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-
-  // Generate PDF
-  await page.pdf({ path: outputPath, format: "A4" });
-
+  const pdfBuffer = await page.pdf({ format: "A4" });
   await browser.close();
-}
+  return pdfBuffer.toString("base64");
+};
 
 const feesInvoiceController = {
   async downloadInvoice(req, res, next) {
+    const downloadInvoiceSchema = Joi.object({
+      _id: Joi.string().required(),
+      month: Joi.string().required(), //Jan2024
+    });
+    const { error } = downloadInvoiceSchema.validate(req.body);
+    if (error) {
+      return next(error);
+    }
+    const { _id, month } = req.body;
     try {
-      const user = await User.findOne({ _id: req.user._id });
+      const [user, feeSlipData] = await Promise.all([
+        User.findOne({ _id }),
+        StudentFees.findOne({
+          user: _id,
+          dueMonth: { $in: [month] },
+        }),
+      ]);
+
       if (!user) {
-        next(CustomErrorHandler.notFound());
-      }
-      const feeSlipData = await StudentFees.findOne({ user: req.user._id });
-      if (!feeSlipData) {
-        next(CustomErrorHandler.notFound("No result found!"));
+        return next(CustomErrorHandler.notFound());
       }
 
-      const username = user.name;
-      const mobileNumber = user.mobile_number;
-      const courseName = user.profile.course.join(", ");
-      const formatCourseName = courseName.replace(/,([^,]*)$/, ", and$1");
+      if (!feeSlipData) {
+        return next(CustomErrorHandler.notFound("No result found!"));
+      }
+
       const {
         receiptId,
         courseFee,
@@ -46,6 +68,11 @@ const feesInvoiceController = {
         totalPayment,
         dueMonth,
       } = feeSlipData;
+
+      const username = user.name;
+      const mobileNumber = user.mobile_number;
+      const courseName = user.profile.course.join(", ");
+      const formatCourseName = courseName.replace(/,([^,]*)$/, ", and$1");
       const due_months = formatMonths(dueMonth);
       const subtotalAmt = (parseInt(courseFee) + parseInt(lateFee)).toString();
 
@@ -119,23 +146,33 @@ const feesInvoiceController = {
       <td valign="top" align="center" style="padding:0;Margin:0;width:560px"><table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"><tr><td class="es-infoblock" align="center" style="padding:0;Margin:0;line-height:14px;font-size:12px;color:#CCCCCC"><strong>This is auto generated Fee Slip. Don't Reply!&nbsp;</strong> </td></tr></table></td></tr></table></td></tr></table></td></tr></table></td></tr></table></div></body></html>
       `;
 
-      // Define the output path for the PDF
-      const outputPath = "./fee_slip.pdf";
-      // Generate PDF from HTML
-      await generatePDFFromHTML(htmlTemplate, outputPath);
-      // Set response headers for PDF download
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader(
-        "Content-Disposition",
-        'attachment; filename="fee_slip.pdf"'
-      );
-      // Stream the PDF file to the response
-      fs.createReadStream(outputPath).pipe(res);
+      const base64PDF = await generatePDF(htmlTemplate);
+      res.json({ data: base64PDF });
     } catch (err) {
       return next(err);
     }
   },
 };
+
+//       // Define the output path for the PDF
+//       const outputPath = `./XM@_feeSlip-${due_months}.pdf`;
+//       // Generate PDF from HTML
+//       await generatePDFFromHTML(htmlTemplate, outputPath);
+//       // Set response headers for PDF download
+
+//       // Send the generated PDF file as response
+//       res.download(outputPath, (err) => {
+//         if (err) {
+//           return next(CustomErrorHandler.serverError("Unable to download file"));
+//         }
+//         // Remove the generated PDF file after download
+//         fs.unlinkSync(outputPath);
+//       });
+//     } catch (err) {
+//       return next(err);
+//     }
+//   },
+// };
 
 module.exports = feesInvoiceController;
 

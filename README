@@ -37,3 +37,12 @@ This is Online learning App Developed by = 'Mohd Shamail'
 
 token = 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3NmQ1YmRlMDhjMjEwOGFiNWI0YzciLCJpYXQiOjE3MTQ5MDg1MDcsImV4cCI6MTc3ODAyMzcwN30.3sClIuz63badzd__GX0uuKwuKfjgBgAsgACFN2HeB3U
+
+
+// {
+//   "mobile_number":"8218546225",
+//   "course":["X (Maths)"],
+//   "schoolName":"A.K Inter College",
+//   "fatherName":"Mr.Shamail ",
+//    "address":"Town Neoria Husainpur Distt Pilibhit pin 262305"
+// }

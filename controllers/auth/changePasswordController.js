@@ -7,20 +7,21 @@ const CustomErrorHandler = require("../../services/CustomErrorHandler");
 const changePasswordController = {
   async changePassword(req, res, next) {
     const changePasswordSchema = Joi.object({
+      email: Joi.string().email().required(),
       password: Joi.string()
         .required()
         .pattern(new RegExp("^[a-zA-Z0-9!@#$%^&*()-_+=<>?/{}|~]{3,30}$")),
       newPassword: Joi.string()
         .required()
         .pattern(new RegExp("^[a-zA-Z0-9!@#$%^&*()-_+=<>?/{}|~]{3,30}$")),
-      email: Joi.string().email().required(),
+      
     });
 
     const { error } = changePasswordSchema.validate(req.body);
     if (error) {
       return next(error);
     }
-
+    console.log(req.body);
     const { password, newPassword, email } = req.body;
 
     try {
@@ -34,7 +35,7 @@ const changePasswordController = {
       const matchPwd = await bcrypt.compare(password, user.password);
       if (!matchPwd) {
         return next(
-          CustomErrorHandler.invalidCredentials("Invalid old password")
+          CustomErrorHandler.notFound("Invalid old password")
         );
       }
 
@@ -46,12 +47,12 @@ const changePasswordController = {
       await user.save();
 
       // Optionally, you can generate a new JWT token with the updated user details
-      const token = JwtService.sign({ _id: user._id, role: user.role });
+      // token = JwtService.sign({ _id: user._id, role: user.role });
 
       res.status(200).json({
         success: true,
         msg: "Password changed successfully",
-        token: token,
+        //token: token,
       });
     } catch (err) {
       return next(err);
