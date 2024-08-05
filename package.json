@@ -9,7 +9,7 @@
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mohd Shamail",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",

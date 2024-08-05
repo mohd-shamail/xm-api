@@ -55,8 +55,8 @@ const learningNotesController = {
         );
   
         if (!notes || notes.length === 0) {
-          return res.status(404).json({
-            success: false,
+          return res.status(200).json({
+            success: true,
             data:[],
             msg: "No notes found for the specified course and subject",
           });
