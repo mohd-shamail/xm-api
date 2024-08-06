@@ -12,9 +12,7 @@ const getUserController = {
       }
 
       // Check if the user image exists and construct the URL if it does
-      const imageURL = user.profile.userImage
-        ? `http://192.168.168.56:3000/${user.profile.userImage}`
-        : "";
+      const imageURL = user.profile.userImage;
 
       // Include the imageURL in the response
       res.status(200).json({ ...user.toJSON(), imageURL });
