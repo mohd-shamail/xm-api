@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require("path");
 const express = require("express");
 const cors = require("cors"); // Require the cors middleware
 const { APP_PORT, DB_URL } = require("./config/index");
@@ -7,18 +7,17 @@ const errorHandler = require("./middlewares/errorHandler");
 const mongoose = require("mongoose");
 //const holidayUpdateScript = require('./script/holidayUpdateScript');
 
-
 const app = express();
 
 // Serve static files from the 'uploads' directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Use CORS middleware to allow cross-origin requests
 app.use(cors());
 
 // Middleware for parsing incoming requests from the body
 global.appRoot = path.resolve(__dirname);
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Connect to MongoDB
