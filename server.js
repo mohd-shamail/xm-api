@@ -1,7 +1,7 @@
 const path = require("path");
 const express = require("express");
 const cors = require("cors"); // Require the cors middleware
-const { APP_PORT, DB_URL } = require("./config/index");
+const { PORT, DB_URL } = require("./config/index");
 const routes = require("./routes/index");
 const errorHandler = require("./middlewares/errorHandler");
 const mongoose = require("mongoose");
@@ -27,8 +27,8 @@ mongoose
     console.log("Connected to MongoDB");
     //holidayUpdateScript();
     // Define APP_PORT before using it in app.listen()
-    app.listen(APP_PORT, () => {
-      console.log(`Server is running on http://localhost:${APP_PORT}`);
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
   .catch((error) => console.error("Error connecting to MongoDB:", error));
