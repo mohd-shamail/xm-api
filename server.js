@@ -19,7 +19,7 @@ app.use(cors());
 global.appRoot = path.resolve(__dirname);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
+const APP_PORT = PORT || 3000;
 // Connect to MongoDB
 mongoose
   .connect(DB_URL)
@@ -27,7 +27,7 @@ mongoose
     console.log("Connected to MongoDB");
     //holidayUpdateScript();
     // Define APP_PORT before using it in app.listen()
-    app.listen(PORT, () => {
+    app.listen(APP_PORT,'0.0.0.0', () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
