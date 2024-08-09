@@ -3,6 +3,7 @@ const Joi = require("joi");
 const StudentFees = require("../../models/studentFees");
 const CustomErrorHandler = require("../../services/CustomErrorHandler");
 const PDFDocument = require('pdfkit');
+const fs = require('fs');
 //const puppeteer = require("puppeteer");
 
 
@@ -29,12 +30,16 @@ const generatePDF = (htmlContent) => {
     try {
       const doc = new PDFDocument({ size: 'A4' });
       let buffers = [];
+      
+      // Collect PDF buffers
       doc.on('data', buffers.push.bind(buffers));
       doc.on('end', () => {
-        let pdfData = Buffer.concat(buffers);
+        const pdfData = Buffer.concat(buffers);
         resolve(pdfData.toString('base64'));
       });
-      doc.text(htmlContent); // This is a simple example. You can customize it further.
+
+      // Add content to PDF
+      doc.text(htmlContent); // Replace with your actual content formatting
 
       doc.end();
     } catch (error) {
