@@ -2,6 +2,7 @@ const User = require("../../models/user");
 const Joi = require("joi");
 const StudentFees = require("../../models/studentFees");
 const CustomErrorHandler = require("../../services/CustomErrorHandler");
+const PDFDocument = require('pdfkit');
 //const puppeteer = require("puppeteer");
 
 
