@@ -6,7 +6,17 @@ const puppeteer = require("puppeteer");
 
 
 const generatePDF = async (htmlContent) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: true, // Run in headless mode
+    args: [
+      "--no-sandbox", // Required for running in many server environments
+      "--disable-setuid-sandbox", // Required for running in many server environments
+      "--disable-dev-shm-usage", // Recommended to avoid issues with shared memory
+      "--disable-gpu", // Recommended for some environments
+      "--no-zygote", // Recommended for server environments
+    ],
+    executablePath: process.env.CHROME_BIN || null, // Specify the Chrome binary if needed
+  });
   const page = await browser.newPage();
   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
   const pdfBuffer = await page.pdf({ format: "A4" });
