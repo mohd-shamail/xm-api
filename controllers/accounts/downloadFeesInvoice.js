@@ -3,21 +3,7 @@ const Joi = require("joi");
 const StudentFees = require("../../models/studentFees");
 const CustomErrorHandler = require("../../services/CustomErrorHandler");
 const puppeteer = require("puppeteer");
-const fs = require("fs");
 
-// // Define the function first
-// async function generatePDFFromHTML(htmlContent, outputPath) {
-//   const browser = await puppeteer.launch({ headless: true });
-//   const page = await browser.newPage();
-
-//   // Set content of the page with the provided HTML
-//   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-
-//   // Generate PDF
-//   await page.pdf({ path: outputPath, format: "A4" });
-
-//   await browser.close();
-// }
 
 const generatePDF = async (htmlContent) => {
   const browser = await puppeteer.launch();
