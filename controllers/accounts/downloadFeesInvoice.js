@@ -2,51 +2,56 @@ const User = require("../../models/user");
 const Joi = require("joi");
 const StudentFees = require("../../models/studentFees");
 const CustomErrorHandler = require("../../services/CustomErrorHandler");
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
-//const puppeteer = require("puppeteer");
+//const PDFDocument = require('pdfkit');
+//const fs = require('fs');
+const puppeteer = require("puppeteer");
 
 
-// const generatePDF = async (htmlContent) => {
-//   const browser = await puppeteer.launch({
-//     headless: true, // Run in headless mode
-//     args: [
-//       "--no-sandbox", // Required for running in many server environments
-//       "--disable-setuid-sandbox", // Required for running in many server environments
-//       "--disable-dev-shm-usage", // Recommended to avoid issues with shared memory
-//       "--disable-gpu", // Recommended for some environments
-//       "--no-zygote", // Recommended for server environments
-//     ],
-//     executablePath: process.env.CHROME_BIN || null, // Specify the Chrome binary if needed
-//   });
-//   const page = await browser.newPage();
-//   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-//   const pdfBuffer = await page.pdf({ format: "A4" });
-//   await browser.close();
-//   return pdfBuffer.toString("base64");
-// };
-const generatePDF = (htmlContent) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const doc = new PDFDocument({ size: 'A4' });
-      let buffers = [];
-      
-      // Collect PDF buffers
-      doc.on('data', buffers.push.bind(buffers));
-      doc.on('end', () => {
-        const pdfData = Buffer.concat(buffers);
-        resolve(pdfData.toString('base64'));
-      });
-
-      // Add content to PDF
-      doc.text(htmlContent); // Replace with your actual content formatting
-
-      doc.end();
-    } catch (error) {
-      reject(error);
-    }
+const generatePDF = async (htmlContent) => {
+  const browser = await puppeteer.launch({
+    headless: true, // Run in headless mode
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-zygote',
+      '--single-process', // Important for Render
+      '--disable-accelerated-2d-canvas',
+      '--disable-dev-shm-usage',
+    ],
+    executablePath: process.env.CHROME_BIN ||'/usr/bin/chromium-browser' || null, // Specify the Chrome binary if needed
   });
+  const page = await browser.newPage();
+  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+  const pdfBuffer = await page.pdf({ format: "A4" });
+  await browser.close();
+  return pdfBuffer.toString("base64");
 };
+
+
+// const generatePDF = (htmlContent) => {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       const doc = new PDFDocument({ size: 'A4' });
+//       let buffers = [];
+      
+//       // Collect PDF buffers
+//       doc.on('data', buffers.push.bind(buffers));
+//       doc.on('end', () => {
+//         const pdfData = Buffer.concat(buffers);
+//         resolve(pdfData.toString('base64'));
+//       });
+
+//       // Add content to PDF
+//       doc.text(htmlContent); // Replace with your actual content formatting
+
+//       doc.end();
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
 
 const feesInvoiceController = {
   async downloadInvoice(req, res, next) {
