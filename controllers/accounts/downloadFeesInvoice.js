@@ -7,7 +7,7 @@ const puppeteer = require("puppeteer");
 const generatePDF = async (htmlContent) => {
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: '/opt/render/.cache/puppeteer/chrome/linux-127.0.6533.99/chrome',
+    executablePath: '/opt/render/.cache/puppeteer/chrome/linux-127.0.6533.99/chrome-linux64/chrome',
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
