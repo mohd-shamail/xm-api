@@ -20,7 +20,6 @@ const generatePDF = async (htmlContent) => {
       '--disable-accelerated-2d-canvas',
       '--disable-dev-shm-usage',
     ],
-    executablePath: process.env.CHROME_BIN ||'/usr/bin/chromium-browser' || null, // Specify the Chrome binary if needed
   });
   const page = await browser.newPage();
   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
