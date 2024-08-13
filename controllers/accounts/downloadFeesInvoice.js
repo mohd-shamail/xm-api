@@ -11,14 +11,11 @@ const generatePDF = async (htmlContent) => {
   const browser = await puppeteer.launch({
     headless: true, // Run in headless mode
     args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--no-zygote',
-      '--single-process', // Important for Render
-      '--disable-accelerated-2d-canvas',
-      '--disable-dev-shm-usage',
+      "--no-sandbox", // Required for running in many server environments
+      "--disable-setuid-sandbox", // Required for running in many server environments
+      "--disable-dev-shm-usage", // Recommended to avoid issues with shared memory
+      "--disable-gpu", // Recommended for some environments
+      "--no-zygote", // Recommended for server environments
     ],
   });
   const page = await browser.newPage();
