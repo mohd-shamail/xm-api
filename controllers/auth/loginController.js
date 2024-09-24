@@ -57,6 +57,7 @@ const loginController = {
         access_token: access_token,
         user_roles: user.user_role,
         course:user.profile.course,
+        image:user.profile.userImage,
         // refresh_token: refresh_token,
       });
 

@@ -6,6 +6,10 @@ const updateProfileController = {
   async updateProfile(req, res, next) {
     //req validation
     const updateProfileSchema = Joi.object({
+      email: Joi.string().email({
+        minDomainSegments: 2,
+        tlds: { allow: ["com", "net", "in"] },
+      }),
       mobile_number: Joi.string().min(10).max(13), // New
       course: Joi.array().items(Joi.string().min(3).max(100)),
       schoolName: Joi.string()
@@ -26,6 +30,7 @@ const updateProfileController = {
       return next(error);
     }
     const {
+      email,
       mobile_number,
       course,
       schoolName,
@@ -44,6 +49,7 @@ const updateProfileController = {
       if (!user.profile) {
         user.profile = {};
       }
+      user.email = email;
       user.mobile_number = mobile_number;
       user.profile.course = course;
       user.profile.schoolName = schoolName;
@@ -54,7 +60,9 @@ const updateProfileController = {
 
       // Save the updated user document
       await user.save();
-      res.status(200).json({ success: true , message: "profile updated successfully"});
+      res
+        .status(200)
+        .json({ success: true, message: "profile updated successfully" });
     } catch (err) {
       return next(err);
     }

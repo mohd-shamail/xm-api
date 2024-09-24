@@ -9,15 +9,23 @@ const JwtService = require("../../services/JwtService");
 const registerController = {
   async register(req, res, next) {
     const registerSchema = Joi.object({
-      name: Joi.string().regex(/^[a-zA-Z\s.]+$/).min(3).max(30).required(),
+      name: Joi.string()
+        .regex(/^[a-zA-Z\s.]+$/)
+        .min(3)
+        .max(30)
+        .required(),
       email: Joi.string()
         .required()
         .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "in"] } }),
       mobile_number: Joi.string().required().min(10).max(10),
       password: Joi.string()
         .required()
-        .pattern(new RegExp("^[a-zA-Z0-9!@#$%^&*()-_+=<>?/{}|~]{3,30}$")).min(3).max(30),
+        .pattern(new RegExp("^[a-zA-Z0-9!@#$%^&*()-_+=<>?/{}|~]{3,30}$"))
+        .min(3)
+        .max(30),
+      user_role: Joi.string(),
     });
+
     console.log("sign up data = ", req.body);
     const { error } = registerSchema.validate(req.body);
 
@@ -35,13 +43,14 @@ const registerController = {
       return next(err);
     }
     //prepare modal
-    const { name, email, mobile_number, password } = req.body;
+    const { name, email, mobile_number, password, user_role } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       name,
       email,
       mobile_number,
       password: hashedPassword,
+      user_role,
     });
     let access_token;
     //let refresh_token;

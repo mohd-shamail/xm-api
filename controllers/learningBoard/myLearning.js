@@ -13,41 +13,49 @@ const mylearningController = {
 
       // Retrieve fees information
       const feesRecords = await StudentFees.find({ user: req.user._id })
-        .select("totalPayment dueMonth submitDate")
+        .select("dueMonth")
         .lean();
       if (!feesRecords) {
         return next(CustomErrorHandler.notFound("No fees Record Found!"));
       }
+
       // Get the current date
       const currentDate = new Date();
+
+      // Parse the admission date from the format "DD-MM-YYYY"
+      const [admissionDay, admissionMonth, admissionYear] = user.profile.admissionDate.split("-");
+      const admissionDate = new Date(`${admissionYear}-${admissionMonth}-${admissionDay}`);
+
       const monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
       ];
-      const currentMonthIndex = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
 
-      // Create a Set of all dueMonths from the fees records
-      const paidMonths = new Set(
-        feesRecords.flatMap((record) => record.dueMonth)
-      );
+      // Create a Set of all paid dueMonths from the fees records
+      const paidMonths = new Set(feesRecords.flatMap((record) => record.dueMonth));
 
-      // Determine the due months
+      // Determine the due months based on admission date
       const dueMonths = [];
-      for (let i = 0; i <= currentMonthIndex; i++) {
-        const monthStr = monthNames[i] + currentYear;
+      let year = admissionDate.getFullYear();
+      let monthIndex = admissionDate.getMonth(); // 0-based index for month
+
+      // Loop through months from admission date to current date
+      while (
+        year < currentDate.getFullYear() || 
+        (year === currentDate.getFullYear() && monthIndex <= currentDate.getMonth())
+      ) {
+        const monthStr = monthNames[monthIndex] + year;
+        
+        // Check if the month is not found in paid months
         if (!paidMonths.has(monthStr)) {
-          dueMonths.push(monthStr);
+          dueMonths.push(monthStr);  // Add to dueMonths if not paid
+        }
+
+        // Move to the next month
+        monthIndex++;
+        if (monthIndex > 11) {
+          monthIndex = 0;
+          year++;
         }
       }
 
@@ -65,7 +73,6 @@ const mylearningController = {
           dueMonths,
           // Include other user details you want to send
         },
-        
       });
     } catch (err) {
       return next(err);

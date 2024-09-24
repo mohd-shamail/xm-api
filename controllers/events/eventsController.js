@@ -2,85 +2,80 @@ const Joi = require("joi");
 const User = require("../../models/user");
 const Event = require("../../models/events");
 const CustomErrorHandler = require("../../services/CustomErrorHandler");
-const fs = require("fs");
-const multer = require("multer");
-const path = require("path");
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/events/"),
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${Math.round(
-      Math.random() * 1e7
-    )}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  },
-});
-
-const handleMultipartData = multer({
-  storage,
-  limits: { fileSize: 1000000 * 2 },
-}).single("image");
+const moment = require("moment");
 
 const eventController = {
   async addEvents(req, res, next) {
-    // Validation schema
+    // Validation schema using Joi
     const addEventsSchema = Joi.object({
       title: Joi.string().required(),
-      subTitle: Joi.string().required(),
-      date: Joi.string().required(),
-      desc1: Joi.string().required(),
-      desc2: Joi.string().required(),
-      isNewPost: Joi.boolean(),
-      category: Joi.string().required(),
+      sentBy: Joi.string().required(),
+      desc: Joi.string().required(),
+      imageUrl: Joi.string().uri().required(),
     });
+
+    // Validate request body
     const { error } = addEventsSchema.validate(req.body);
     if (error) {
-      return next(error);
+      return next(error); // Return error if validation fails
     }
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      console.log("User not found");
-      return next(CustomErrorHandler.notFound());
+
+    try {
+      // Find the user
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return next(CustomErrorHandler.notFound());
+      }
+
+      const { title, sentBy, desc, imageUrl } = req.body;
+      const date = moment().format("DD-MM-YYYY");
+
+      // Set expiresAt to 14 days from now
+      const expiresAt = moment().add(14, "days").toDate();
+
+      // Create a new event document
+      const eventsData = new Event({
+        title,
+        sentBy,
+        date,
+        desc,
+        imageUrl,
+        expiresAt, // Set the expiration date
+      });
+
+      // Save the event to the database
+      await eventsData.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Event added successfully.",
+      });
+    } catch (err) {
+      return next(err); // Handle any errors that occur during saving
     }
-    const { title, subTitle, date, desc1, desc2, isNewPost, category } =
-      req.body;
-    console.log("title = " ,title,"subTitle = ", subTitle, "date = " ,date, 
-      "desc1 = ", desc1,"desc2 = ", desc2,"isNewPost = ",  isNewPost,"category =", category);
-    handleMultipartData(req, res, async (err) => {
-      if (err) {
-        return next(
-          CustomErrorHandler.notFound("upload Failed! Please try again.")
-        );
+  },
+
+  async getEvents(req, res, next) {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return next(CustomErrorHandler.notFound());
       }
-      if (!req.file) {
-        return next(CustomErrorHandler.notFound("No file uploaded."));
+      // Fetch all events from the database
+      const events = await Event.find();
+      if (events.length === 0) {
+        // Return a 404 Not Found error if no events exist
+        return next(CustomErrorHandler.notFound("No events found"));
       }
-      const filePath = req.file.path;
-      console.log("filePath of Img =", filePath);
-      try {
-        const eventsData = new Event({
-          title,
-          subTitle,
-          date,
-          desc1,
-          desc2,
-          isNewPost,
-          category,
-          // imageUrl: filePath,
-        });
-        console.log("eventsData = ", eventsData);
-        await eventsData.save();
-        res.status(200).json({
-          success: true,
-          message: "Event Added successfully.",
-        });
-      } catch (err) {
-        fs.unlink(`${appRoot}/${filePath}`, (err) => {
-          return next(CustomErrorHandler.notFound(err.message));
-        });
-        return next(err);
-      }
-    });
+      // Return the events in JSON format
+      res.status(200).json({
+        success: true,
+        data: events,
+      });
+    } catch (err) {
+      // Handle any errors that occur while fetching events
+      return next(CustomErrorHandler.notFound(err.message));
+    }
   },
 };
 

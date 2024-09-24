@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./user");
-const Joi = require("joi");
 
 const Schema = mongoose.Schema;
 

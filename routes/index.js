@@ -63,10 +63,18 @@ router.post(
   auth,
   controllers.viewAttendanceController.viewAttendance
 );
-router.post("/viewTimeTable",auth, controllers.timeTableController.viewTimeTable);
+router.post(
+  "/viewTimeTable",
+  auth,
+  controllers.timeTableController.viewTimeTable
+);
 router.post(
   "/updateTimeTable",
   controllers.timeTableController.updateTimeTable
+);
+router.post(
+  "/deleteTimeTable",
+  controllers.timeTableController.deleteTimeTable
 );
 router.post("/updateHomeWork", controllers.homeWorkController.updateHomeWork);
 router.post("/viewHomeWork", controllers.homeWorkController.viewHomeWork);
@@ -80,6 +88,36 @@ router.post(
 );
 router.get("/getCarousel", controllers.carouselController.getCarouseldata);
 router.post("/addEvent", auth, controllers.eventController.addEvents);
+router.get("/getEvents", auth, controllers.eventController.getEvents);
 router.get("/myLearning", auth, controllers.mylearningController.myLearning);
+router.get("/getQuotes", controllers.dailyQuotesController.getQuotes);
+router.get("/getallUser", auth, controllers.getAllUserController.viewAllUser);
+router.post("/leaveApply", auth, controllers.leaveController.leaveApply);
+router.post(
+  "/deleteUser",
+  auth,
+  controllers.deleteUserController.deleteUserProfile
+);
+router.post(
+  "/updateAdmissionDate",
+  auth,
+  controllers.admissionDateController.updateAdmissionDate
+);
+router.post(
+  "/addCertificate",
+  auth,
+  controllers.certificatesController.addCertificate
+);
+router.get(
+  "/getCertificates",
+  auth,
+  controllers.certificatesController.getCertificates
+);
+
+router.get(
+  "/todaysAttendance",
+  auth,
+  controllers.todaysAttendanceController.getTodaysAttendance
+);
 
 module.exports = router;
