@@ -28,11 +28,12 @@ const eventController = {
       }
 
       const { title, sentBy, desc, imageUrl } = req.body;
-      const date = moment().format("DD-MM-YYYY");
+      const date = moment().toDate(); 
 
       // Set expiresAt to 14 days from now
       const expiresAt = moment().add(14, "days").toDate();
-
+      // Log the URL to check if it's valid
+      console.log("Image URL being saved:", imageUrl);
       // Create a new event document
       const eventsData = new Event({
         title,
@@ -42,7 +43,7 @@ const eventController = {
         imageUrl,
         expiresAt, // Set the expiration date
       });
-
+      console.log(eventsData);
       // Save the event to the database
       await eventsData.save();
 
@@ -51,6 +52,7 @@ const eventController = {
         message: "Event added successfully.",
       });
     } catch (err) {
+      console.error("Error adding event:", err); // Detailed logging
       return next(err); // Handle any errors that occur during saving
     }
   },
