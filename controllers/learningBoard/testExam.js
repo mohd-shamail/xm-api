@@ -56,8 +56,8 @@ const testExamController = {
       );
 
       if (!testPaper || testPaper.length === 0) {
-        return res.status(404).json({
-          success: false,
+        return res.status(200).json({
+          success: true,
           msg: "No Test/Exam found for the specified course",
         });
       }

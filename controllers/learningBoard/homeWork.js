@@ -59,7 +59,7 @@ const homeWorkController = {
       );
 
       if (!homeWorks || homeWorks.length === 0) {
-        return res.status(404).json({
+        return res.status(200).json({
           success: false,
           msg: "No homework found for the specified course",
         });
