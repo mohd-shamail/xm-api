@@ -45,19 +45,19 @@ const loginController = {
 
       // Generate new access token
       const access_token = JwtService.sign({ _id: user._id, role: user.role });
-      console.log("access_token =" ,access_token);
+      console.log("access_token =", access_token);
       // Optionally generate a refresh token
       // const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
 
       res.status(200).json({
         success: true,
-        userName:user.name,
+        userName: user.name,
         msg: "Login successful!",
         email: user.email,
         access_token: access_token,
         user_roles: user.user_role,
-        course:user.profile.course,
-        image:user.profile.userImage,
+        course: user.profile ? user.profile.course : null,
+        image: user.profile ? user.profile.userImage : null,
         // refresh_token: refresh_token,
       });
 
